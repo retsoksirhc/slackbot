@@ -1,0 +1,29 @@
+{
+  "name": "@retsoksirhc/slackbot",
+  "version": "1.0.0",
+  "description": "A simple slackbot using the slack events api",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/retsoksirhc/slackbot.git"
+  },
+  "keywords": [
+    "slack",
+    "slackbot",
+    "bot"
+  ],
+  "author": "Christopher Koster",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/retsoksirhc/slackbot/issues"
+  },
+  "homepage": "https://github.com/retsoksirhc/slackbot#readme",
+  "dependencies": {
+    "@hapi/hapi": "^20.1.2",
+    "fs": "0.0.1-security",
+    "superagent": "^6.1.0"
+  }
+}

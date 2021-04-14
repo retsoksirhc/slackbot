@@ -1,0 +1,11 @@
+{
+    "sslKey": "/path/to/your/privkey.pem",
+    "sslCert": "/path/to/your/fullchain.pem",
+    "serverPort": 443,
+    "redirectInsecure": true,
+    "insecurePort": 80,
+    "requestPath": "/path-you-configured-for-your-slack-app",
+    "botVerificationToken": "***provided by slack app config***",
+    "botUserOAuthToken": "***provided by slack app config***",
+    "botAppId": "***provided by slack app config***"
+}
