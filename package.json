@@ -1,6 +1,6 @@
 {
   "name": "@retsoksirhc/slackbot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple slackbot using the slack events api",
   "main": "bot.js",
   "scripts": {

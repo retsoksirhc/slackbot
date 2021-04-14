@@ -1,4 +1,5 @@
 const Hapi = require('@hapi/hapi');
+const { DH_CHECK_P_NOT_SAFE_PRIME } = require('constants');
 const fs = require('fs');
 
 const startServer = async (config) => {
@@ -13,6 +14,10 @@ const startServer = async (config) => {
     });
 
     server.route({method: 'POST', path: config.requestPath, handler: function(request, h) {
+        if (request.payload.type === 'url_verification') {
+            console.log('Responding to url_verification');
+            return h.response(request.payload.challenge).code(200);
+        }
         if (request.payload.token !== config.botVerificationToken) {
           console.log('Received a message with the wrong bot token');
           return h.response().code(200);
