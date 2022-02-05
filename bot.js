@@ -1,7 +1,8 @@
 const superagent = require('superagent');
-const webserver = require('./webserver');
+const {App} = require('@slack/bolt');
 
 let botConfig = {};
+let app;
 
 const sendCommand = async (commandName, payload) => {
     try {
@@ -21,7 +22,7 @@ const postMessage = async (target, text) => {
         channel: target,
         text: text
     };
-    await sendCommand('chat.postMessage', message);
+    await app.client.chat.postMessage(message);
 }
 
 const bot = {
@@ -34,36 +35,24 @@ const messageQueue = [];
 
 const start = async (config) => {
     const {
-        botVerificationToken,
         botUserOAuthToken,
-        botAppId,
-        botUserId,
-        sslKey,
-        sslCert,
-        serverPort,
-        redirectInsecure,
-        insecurePort,
-        requestPath
+        botSigningSecret,
+        botAppToken
     } = config;
 
-    botConfig = {
-        botVerificationToken,
-        botUserOAuthToken,
-        botAppId,
-        botUserId
-    }
+    app = new App({
+        token: botUserOAuthToken,
+        signingSecret: botSigningSecret,
+        appToken: botAppToken,
+        socketMode: true
+    })
+
+    await app.start();
+    app.message((message) => {
+        messageQueue.push(message);
+    });
     plugins.push(...config.plugins);
 
-    await webserver({
-        messageQueue,
-        sslKey,
-        sslCert,
-        serverPort,
-        redirectInsecure,
-        insecurePort,
-        requestPath,
-        botVerificationToken
-    });
     plugins.forEach(async (plugin) => {
         await plugin.init(bot)
     });
@@ -84,16 +73,16 @@ const start = async (config) => {
 
     const processQueue = () => {
         if (messageQueue.length > 0) {
-            const message = messageQueue.shift();
-            const botAuthorization = message.authorizations.find(authorization => authorization.is_bot);
-            const type = message.event.type;
-            const rawText = message.event.text;
+            const event = messageQueue.shift();
+            const botAuthorization = event.body.authorizations.find(authorization => authorization.is_bot);
+            const type = event.type;
+            const rawText = event.message.text;
             const botUserRegex = new RegExp(`\<@${botAuthorization.user_id}\> ?`);
             const trimmedText = rawText.replace(botUserRegex, '').trim();
-            const fromUser = message.event.subtype === 'bot_message' ? message.event.username : message.event.user;
-            const fromChannel = message.event.channel;
-            const eventId = message.event_id;
-            const appId = message.event.bot_profile ? message.event.bot_profile.app_id : undefined;
+            const fromUser = event.message.user;
+            const fromChannel = event.message.channel;
+            const eventId = event.message.client_msg_id;
+            const appId = event.body.api_app_id || undefined;
 
             console.log(`Processing message ${eventId}`);
             try {

@@ -1,5 +1,7 @@
 # @retsoksirhc/slackbot
-A simple slack bot that uses the event API. You can register plugins to send and receive messages. See the example app for usage.
+A simple slack bot that uses the Slack Bolt API in socket mode. You can register plugins to send and receive messages. See the example app for usage.
+
+NOTE: In version 2.0.0, the webserver was removed from this library. You should turn on socket mode instead, so you don't have to expose an http port to the world.
 ### Install
 ```
 npm install @retsoksirhc/slackbot
@@ -10,20 +12,16 @@ npm install @retsoksirhc/slackbot
 const SlackBot = require('@retsoksirhc/slackbot');
 const MyOwnPlugin = require('./plugins/MyOwnPlugin.js');
 
-SlackBot.start({
-    sslKey: "/path/to/your/privkey.pem",
-    sslCert: "/path/to/your/fullchain.pem",
-    serverPort: 443,
-    redirectInsecure: true,
-    insecurePort: 80,
-    requestPath: "/path-you-configured-for-your-slack-app",
-    botVerificationToken: "***provided by slack app config***",
-    botUserOAuthToken: "***provided by slack app config***",
-    botAppId: "***provided by slack app config***"
+const config = {
+    botUserOAuthToken: "***provided by slack***",
+    botSigningSecret: "***provided by slack***",
+    botAppToken: "***provided by slack***",
     plugins: [
         MyOwnPlugin
     ]
-}).then((bot) => {
+}
+
+SlackBot.start(config).then((bot) => {
     console.log('Bot started');
 });
 ```
