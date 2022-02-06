@@ -77,6 +77,10 @@ const start = async (config) => {
             const botAuthorization = event.body.authorizations.find(authorization => authorization.is_bot);
             const type = event.type;
             const rawText = event.message.text;
+            if (!rawText) {
+                // Happens on image only messages, etc
+                return;
+            }
             const botUserRegex = new RegExp(`\<@${botAuthorization.user_id}\> ?`);
             const trimmedText = rawText.replace(botUserRegex, '').trim();
             const fromUser = event.message.user;
