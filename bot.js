@@ -79,6 +79,7 @@ const start = async (config) => {
             const rawText = event.message.text;
             if (!rawText) {
                 // Happens on image only messages, etc
+                setTimeout(processQueue, 10);
                 return;
             }
             const botUserRegex = new RegExp(`\<@${botAuthorization.user_id}\> ?`);
