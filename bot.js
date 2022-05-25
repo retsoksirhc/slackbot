@@ -22,11 +22,21 @@ const postMessage = async (target, text) => {
         channel: target,
         text: text
     };
-    await app.client.chat.postMessage(message);
+    return await app.client.chat.postMessage(message);
+}
+
+const updateMessage = async (timestamp, channel, newText) => {
+    const message = {
+        channel,
+        ts: timestamp,
+        text: newText
+    };
+    return await app.client.chat.update(message)
 }
 
 const bot = {
     postMessage,
+    updateMessage,
     sendCommand
 };
 
