@@ -17,27 +17,37 @@ const sendCommand = async (commandName, payload) => {
     }
 }
 
-const postMessage = async (target, text) => {
+const postMessage = async (target, text, blocks = []) => {
     const message = {
         channel: target,
-        text: text
+        text: text,
+        blocks: blocks
     };
     return await app.client.chat.postMessage(message);
 }
 
-const updateMessage = async (timestamp, channel, newText) => {
+const updateMessage = async (timestamp, channel, newText, newBlocks = []) => {
     const message = {
         channel,
         ts: timestamp,
-        text: newText
+        text: newText,
+        blocks: newBlocks
     };
     return await app.client.chat.update(message)
+}
+
+const reactToMessage = async (timestamp, channel, emoji) => {
+    const reaction = {
+        channel, timestamp, name: emoji
+    }
+    return await app.client.reactions.add(reaction);
 }
 
 const bot = {
     postMessage,
     updateMessage,
-    sendCommand
+    sendCommand,
+    reactToMessage
 };
 
 const plugins = [];
@@ -84,6 +94,7 @@ const start = async (config) => {
     const processQueue = () => {
         if (messageQueue.length > 0) {
             const event = messageQueue.shift();
+            const rawMessage = event.message;
             const botAuthorization = event.body.authorizations.find(authorization => authorization.is_bot);
             const type = event.type;
             const rawText = event.message.text;
@@ -108,7 +119,8 @@ const start = async (config) => {
                     fromUser,
                     fromChannel,
                     eventId,
-                    appId
+                    appId,
+                    rawMessage
                 });
             } catch (e) {
                 console.log(`Couldn't process message - ${e}`);
