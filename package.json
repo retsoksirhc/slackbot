@@ -2,9 +2,17 @@
   "name": "@retsoksirhc/slackbot",
   "version": "2.0.8",
   "description": "A simple slackbot using the slack events api",
-  "main": "bot.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\""
+    "prepare": "npm run build",
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "repository": {
     "type": "git",
@@ -22,8 +30,14 @@
   },
   "homepage": "https://github.com/retsoksirhc/slackbot#readme",
   "dependencies": {
-    "@slack/bolt": "^4.2.0",
+    "@slack/bolt": "^4.6.0",
+    "superagent": "^10.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
     "@types/superagent": "^8.1.9",
-    "superagent": "^10.1.1"
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
   }
 }

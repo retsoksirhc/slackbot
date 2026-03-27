@@ -7,10 +7,10 @@ NOTE: In version 2.0.0, the webserver was removed from this library. You should 
 npm install @retsoksirhc/slackbot
 ```
 ### Usage
-`index.js`
-```js
-const SlackBot = require('@retsoksirhc/slackbot');
-const MyOwnPlugin = require('./plugins/MyOwnPlugin.js');
+`index.ts`
+```ts
+import SlackBot from '@retsoksirhc/slackbot';
+import MyOwnPlugin from './plugins/MyOwnPlugin';
 
 const config = {
     botUserOAuthToken: "***provided by slack***",
@@ -19,24 +19,32 @@ const config = {
     plugins: [
         MyOwnPlugin
     ]
-}
+};
 
 SlackBot.start(config).then((bot) => {
     console.log('Bot started');
 });
 ```
-`./plugins/MyOwnPlugin.js`
-```js
-module.exports = {
-    init: async (bot) => {
-        this.bot = bot;
+`./plugins/MyOwnPlugin.ts`
+```ts
+import type { Bot, Plugin, SlackMessage } from '@retsoksirhc/slackbot';
+
+interface MyPlugin extends Plugin {
+    bot?: Bot;
+}
+
+const plugin: MyPlugin = {
+    init: async (bot: Bot) => {
+        plugin.bot = bot;
         // Post a message to a channel, connect to a database, etc
     },
-    handleMessage: (message) => {
-        const {trimmedText, fromUser, fromChannel} = message;
+    handleMessage: (message: SlackMessage) => {
+        const { trimmedText, fromUser, fromChannel } = message;
         if (trimmedText === 'ping') {
-            this.bot.postMessage(fromChannel, `<@${fromUser}> pong!`);
+            plugin.bot?.postMessage(fromChannel, `<@${fromUser}> pong!`);
         }
     }
-}
+};
+
+export default plugin;
 ```
